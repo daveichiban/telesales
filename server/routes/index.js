@@ -1,5 +1,6 @@
 const salesOrderController = require('../controllers').salesOrder;
 const salesOrderItemController = require('../controllers').salesOrderItem;
+const brandController = require('../controllers').brand;
 
 module.exports = (app) => {
   app.get('/api', (req, res) => res.status(200).send({
@@ -11,5 +12,7 @@ module.exports = (app) => {
   app.get('/api/salesorders/:salesOrderId/', salesOrderController.retrieve);
 
   app.post('/api/salesorders/:salesOrderId/salesorderitems', salesOrderItemController.create);
+
+  app.post('/api/brands', brandController.create);
 
 };
