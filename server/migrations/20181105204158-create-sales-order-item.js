@@ -10,6 +10,7 @@ module.exports = {
       },
       salesOrderId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         onDelete: "CASCADE",
         references: {
           model: "SalesOrders",
@@ -17,10 +18,12 @@ module.exports = {
         }
       },
       productId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       orderQty: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       sentQuantity: {
         type: Sequelize.INTEGER
@@ -29,13 +32,16 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       unitPrice: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE,
+        allowNull: false
       },
       unitCost: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE,
+        allowNull: false
       },
       unitTax: {
-        type: Sequelize.DOUBLE
+        type: Sequelize.DOUBLE,
+        allowNull: false
       },
       lineTotal: {
         type: Sequelize.DOUBLE
