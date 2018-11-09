@@ -1,7 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const SalesOrder = sequelize.define('SalesOrder', {
-    salesOrderNumber: DataTypes.INTEGER,
+    salesOrderNumber: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     statusId: DataTypes.INTEGER,
     customerId: DataTypes.INTEGER,
     billToAddressId: DataTypes.INTEGER,
