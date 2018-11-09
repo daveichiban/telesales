@@ -10,6 +10,7 @@ module.exports = {
         customerId: req.body.customerId,
         billToaddressId: req.body.billToaddressId,
         shipToAddressId: req.body.shipToAddressId,
+        shipMethodId: req.body.shipMethodId,
         subTotal: req.body.subTotal,
         taxAmount: req.body.taxAmount,
         freightDue: req.body.freightDue,
