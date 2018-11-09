@@ -13,19 +13,23 @@ module.exports = {
         allowNull: false
       },
       statusId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       customerId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       billToAddressId: {
         type: Sequelize.INTEGER
       },
       shipToAddressId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       shipMethodId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       subTotal: {
         type: Sequelize.DOUBLE
