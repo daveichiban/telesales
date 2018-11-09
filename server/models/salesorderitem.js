@@ -9,7 +9,16 @@ module.exports = (sequelize, DataTypes) => {
     unitPrice: DataTypes.DOUBLE,
     unitCost: DataTypes.DOUBLE,
     unitTax: DataTypes.DOUBLE,
-    lineTotal: DataTypes.DOUBLE
+    lineTotal: {
+      type: DataTypes.DOUBLE,
+      set() {
+        const orderQty = this.getDataValue("orderQty");
+        const unitPrice = this.getDataValue("unitPrice");
+        this.setDataValue("lineTotal", orderQty * unitPrice)
+      },
+    },
+    
+    
   }, {});
   SalesOrderItem.associate = function(models) {
     // associations can be defined here
