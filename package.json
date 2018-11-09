@@ -15,7 +15,8 @@
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "mysql2": "^1.6.1",
-    "sequelize": "^4.41.0"
+    "sequelize": "^4.41.0",
+    "validator": "^10.9.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.5"
