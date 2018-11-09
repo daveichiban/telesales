@@ -7,6 +7,9 @@ module.exports = (app) => {
   }));
 
   app.post('/api/salesorders', salesOrderController.create);
+  app.get('/api/salesorders', salesOrderController.list);
+  app.get('/api/salesorders/:salesOrderId/', salesOrderController.retrieve);
+
   app.post('/api/salesorders/:salesOrderId/salesorderitems', salesOrderItemController.create);
 
 };
