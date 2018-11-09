@@ -4,7 +4,12 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     slug: DataTypes.STRING,
     description: DataTypes.TEXT,
-    imageUrl: DataTypes.STRING
+    imageUrl: {
+      type: DataTypes.STRING,
+      validate: {
+        isURL: true
+      },
+    }
   }, {});
   Brand.associate = function(models) {
     // associations can be defined here
