@@ -1,5 +1,7 @@
 const SalesOrder = require('../models').SalesOrder;
 const SalesOrderItem = require('../models').SalesOrderItem;
+const _ = require("lodash");
+
 
 module.exports = {
   create(req, res) {
@@ -21,8 +23,20 @@ module.exports = {
       .catch(error => res.status(400).send(error));
   },
   list(req, res) {
+
+    let filter = _.omit(req.query, ["sort", "limit", "offset", "fields"]);
+    //let fields = ["salesOrderNumber","statusId","customerId","billToaddressId","shipToAddressId","shipMethodId","subTotal","taxAmount","freightDue","grandTotal","shippingDate"];
+    let fields;
+    if(req.query.fields) {
+       fields = (req.query.fields).split(",");
+       console.log(fields);
+    };
     return SalesOrder
       .findAll({
+        attributes: fields || null,
+        where: null,
+        limit: parseInt(req.query.limit) || 50,
+        offset: parseInt(req.query.offset) || 0,
         include: [{
           model: SalesOrderItem,
           as: 'orderLines',
