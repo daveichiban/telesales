@@ -82,7 +82,7 @@ module.exports = {
             salesOrderNumber: req.body.salesOrderNumber,
             statusId: req.body.statusId,
             customerId: req.body.customerId,
-            billToaddressId: req.body.billToaddressId,
+            billToAddressId: req.body.billToAddressId,
             shipToAddressId: req.body.shipToAddressId,
             shipMethodId: req.body.shipMethodId,
             subTotal: req.body.subTotal,
@@ -96,5 +96,21 @@ module.exports = {
           .catch((error) => res.status(400).send(error));
       })
       .catch((error) => res.status(400).send(error));
+  },
+  destroy(req, res) {
+    return SalesOrder
+      .findById(req.params.salesOrderId)
+      .then(salesOrder => {
+        if (!salesOrder) {
+          return res.status(400).send({
+            message: 'Sales Order Not Found',
+          });
+        }
+        return salesOrder
+          .destroy()
+          .then(() => res.status(204).send())
+          .catch(error => res.status(400).send(error));
+      })
+      .catch(error => res.status(400).send(error));
   },
 };

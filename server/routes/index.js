@@ -11,6 +11,7 @@ module.exports = (app) => {
   app.get('/api/salesorders', salesOrderController.list);
   app.get('/api/salesorders/:salesOrderId/', salesOrderController.retrieve);
   app.put('/api/salesorders/:salesOrderId/', salesOrderController.update);
+  app.delete('/api/salesorders/:salesOrderId/', salesOrderController.destroy);
 
   app.post('/api/salesorders/:salesOrderId/salesorderitems', salesOrderItemController.create);
 
