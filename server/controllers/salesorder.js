@@ -1,10 +1,15 @@
 const SalesOrder = require('../models').SalesOrder;
 const SalesOrderItem = require('../models').SalesOrderItem;
 const _ = require("lodash");
+const Op = require("sequelize").Op;
+
+
+
 
 
 module.exports = {
   create(req, res) {
+    console.log(req.body.orderLines);
     return SalesOrder
       .create({
         salesOrderNumber: req.body.salesOrderNumber,
@@ -17,34 +22,62 @@ module.exports = {
         taxAmount: req.body.taxAmount,
         freightDue: req.body.freightDue,
         grandTotal: req.body.grandTotal,
-        shippingDate: req.body.shippingDate
-      })
+        shippingDate: req.body.shippingDate,
+        orderLines: req.body.orderLines,
+      }, {
+          include: [{
+            model: SalesOrderItem,
+            as: "orderLines"
+          }]
+        })
       .then(salesOrder => res.status(201).send(salesOrder))
       .catch(error => res.status(400).send(error));
   },
   list(req, res) {
-
+    let saleOrderfields = ["id", "salesOrderNumber", "statusId", "customerId", "billToaddressId", "shipToAddressId", "shipMethodId", "subTotal", "taxAmount", "freightDue", "grandTotal", "shippingDate"];
     let filter = _.omit(req.query, ["sort", "limit", "offset", "fields"]);
-    //let fields = ["salesOrderNumber","statusId","customerId","billToaddressId","shipToAddressId","shipMethodId","subTotal","taxAmount","freightDue","grandTotal","shippingDate"];
-    let fields;
-    if (req.query.fields) {
-      fields = (req.query.fields).split(",");
-      console.log(fields);
+    let sortOrder = ["id", "ASC"];
+    let associations = {
+      model: SalesOrderItem,
+      as: 'orderLines',
     };
+    if (req.query.sort) {
+      sortOrder = (req.query.sort).split(":");
+    }
+    if (req.query.fields) {
+      saleOrderfields = (req.query.fields).split(",");
+      saleOrderfields = _.pull(saleOrderfields, "orderLines");
+    };
+    if (req.query.fields) {
+      if (!req.query.fields.orderLines) {
+        associations = [];
+        console.log("Truthy")
+      };
+    };
+
+    console.log(associations);
     return SalesOrder
       .findAll({
-        attributes: fields || null,
-        where: null,
+        attributes: saleOrderfields,
+        where: filter || null,
         limit: parseInt(req.query.limit) || 50,
         offset: parseInt(req.query.offset) || 0,
-        include: [{
-          model: SalesOrderItem,
-          as: 'orderLines',
-        }],
+        order: [sortOrder],
+        // include:  [{
+        //   model: SalesOrderItem,
+        //   as: 'orderLines',
+        // }],
+
+        include: associations,
+
+
       })
       .then(salesOrder => res.status(200).send(salesOrder))
       .catch(error => res.status(400).send(error));
   },
+
+  //Find one sales orders
+
   retrieve(req, res) {
     return SalesOrder
       .findById(req.params.salesOrderId, {
@@ -63,6 +96,9 @@ module.exports = {
       })
       .catch(error => res.status(400).send(error));
   },
+
+  // Update a Sales Order
+
   update(req, res) {
     return SalesOrder
       .findById(req.params.salesOrderId, {
