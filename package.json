@@ -1,11 +1,13 @@
 {
-  "name": "Telesales",
+  "name": "telesales",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon ./bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js --timeout 15000",
+    "test-watch": "nodemon --exec \"npm test\"",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,9 @@
     "validator": "^10.9.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.5"
+    "expect": "^23.6.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.5",
+    "supertest": "^3.3.0"
   }
 }
