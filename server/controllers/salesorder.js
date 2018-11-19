@@ -4,12 +4,34 @@ const _ = require("lodash");
 const Op = require("sequelize").Op;
 
 
+function includeOrderLines(str) {
+  if (str && !str.includes("orderLines")) {
+    console.log("No order lines")
+    return [];
+  } else {
+    return {
+      model: SalesOrderItem,
+      as: 'orderLines',
+    };
+  }
+};
+
+function fieldSelector(str) {
+  let saleOrderfields;
+  if (str) {
+    saleOrderfields = (str).split(",");
+    saleOrderfields = _.pull(saleOrderfields, "orderLines");
+  } else {
+    saleOrderfields = ["id", "salesOrderNumber", "statusId", "customerId", "billToaddressId", "shipToAddressId", "shipMethodId", "subTotal", "taxAmount", "freightDue", "grandTotal", "shippingDate"];
+  };
+  return saleOrderfields;
+};
+
 
 
 
 module.exports = {
   create(req, res) {
-    console.log(req.body.orderLines);
     return SalesOrder
       .create({
         salesOrderNumber: req.body.salesOrderNumber,
@@ -33,44 +55,39 @@ module.exports = {
       .then(salesOrder => res.status(201).send(salesOrder))
       .catch(error => res.status(400).send(error));
   },
+
   list(req, res) {
-    let saleOrderfields = ["id", "salesOrderNumber", "statusId", "customerId", "billToaddressId", "shipToAddressId", "shipMethodId", "subTotal", "taxAmount", "freightDue", "grandTotal", "shippingDate"];
     let filter = _.omit(req.query, ["sort", "limit", "offset", "fields"]);
     let sortOrder = ["id", "ASC"];
-    let associations = {
-      model: SalesOrderItem,
-      as: 'orderLines',
-    };
     if (req.query.sort) {
       sortOrder = (req.query.sort).split(":");
     }
-    if (req.query.fields) {
-      saleOrderfields = (req.query.fields).split(",");
-      saleOrderfields = _.pull(saleOrderfields, "orderLines");
-    };
-    if (req.query.fields) {
-      if (!req.query.fields.orderLines) {
-        associations = [];
-        console.log("Truthy")
-      };
-    };
 
-    console.log(associations);
+    let saleOrderfields = fieldSelector(req.query.fields);
+    //Check to include Orderlines
+    let associations = includeOrderLines(req.query.fields);
+
+    let cleanFilters = _.mapValues(filter, (value) => {
+      if (value.includes("gt") || value.includes("lt")) {
+        value = value
+          .replace(/gt(?!e)/, "\"gt\"")
+          .replace("gte", "\"gte\"")
+          .replace(/lt(?!e)/, "\"lt\"")
+          .replace("lte", "\"lte\"")
+        console.log(value);
+        return JSON.parse(`{${value}}`)
+      } else {
+        return value;
+      }
+    })
     return SalesOrder
       .findAll({
         attributes: saleOrderfields,
-        where: filter || null,
+        where: cleanFilters,
         limit: parseInt(req.query.limit) || 50,
         offset: parseInt(req.query.offset) || 0,
         order: [sortOrder],
-        // include:  [{
-        //   model: SalesOrderItem,
-        //   as: 'orderLines',
-        // }],
-
         include: associations,
-
-
       })
       .then(salesOrder => res.status(200).send(salesOrder))
       .catch(error => res.status(400).send(error));
@@ -79,12 +96,12 @@ module.exports = {
   //Find one sales orders
 
   retrieve(req, res) {
+    let saleOrderfields = fieldSelector(req.query.fields);
+    let associations = includeOrderLines(req.query.fields);
     return SalesOrder
       .findById(req.params.salesOrderId, {
-        include: [{
-          model: SalesOrderItem,
-          as: 'orderLines',
-        }],
+        attributes: saleOrderfields,
+        include: associations,
       })
       .then(salesOrder => {
         if (!salesOrder) {
